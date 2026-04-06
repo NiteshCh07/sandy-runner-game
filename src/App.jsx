@@ -12,10 +12,13 @@ export default function App() {
 
     const obstacleTimer = setInterval(() => {
       setObstacleX((prev) => {
+        const resetPoint = window.innerWidth < 768 ? 500 : 1000;
+
         if (prev < -60) {
-          return window.innerWidth > 768 ? 1000 : 700;
+          return resetPoint;
         }
-        return prev - 12;
+
+        return prev - (window.innerWidth < 768 ? 8 : 12);
       });
     }, 20);
 
@@ -30,7 +33,17 @@ export default function App() {
   }, [gameOver]);
 
   useEffect(() => {
-    if (obstacleX > 80 && obstacleX < 180 && dogY < 80) {
+    const isMobile = window.innerWidth < 768;
+
+    const dogLeft = isMobile ? 40 : 80;
+    const dogRight = isMobile ? 100 : 170;
+    const jumpLimit = isMobile ? 45 : 80;
+
+    if (
+      obstacleX > dogLeft &&
+      obstacleX < dogRight &&
+      dogY < jumpLimit
+    ) {
       setGameOver(true);
     }
   }, [obstacleX, dogY]);
@@ -45,14 +58,14 @@ export default function App() {
 
     const jumpTimer = setInterval(() => {
       if (goingUp) {
-        height += 10;
+        height += window.innerWidth < 768 ? 8 : 10;
         setDogY(height);
 
-        if (height >= 150) {
+        if (height >= (window.innerWidth < 768 ? 110 : 150)) {
           goingUp = false;
         }
       } else {
-        height -= 10;
+        height -= window.innerWidth < 768 ? 8 : 10;
         setDogY(height);
 
         if (height <= 0) {
@@ -121,9 +134,24 @@ export default function App() {
           background: "#f4f4f4",
           border: "4px solid black",
           overflow: "hidden",
-          borderRadius: "16px",
+          borderRadius: "20px",
         }}
       >
+        <div
+          style={{
+            position: "absolute",
+            top: "15px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            fontSize: "clamp(20px, 4vw, 36px)",
+            fontWeight: "bold",
+            color: "#333",
+            zIndex: 10,
+          }}
+        >
+          Go, Sandy, Go!
+        </div>
+
         <div
           style={{
             position: "absolute",
@@ -131,6 +159,7 @@ export default function App() {
             left: "20px",
             fontSize: "clamp(18px, 3vw, 32px)",
             fontWeight: "bold",
+            color: "#666",
             zIndex: 10,
           }}
         >
@@ -156,6 +185,7 @@ export default function App() {
                 fontSize: "clamp(32px, 8vw, 64px)",
                 margin: 0,
                 color: "white",
+                lineHeight: 1,
               }}
             >
               Game Over
@@ -178,8 +208,8 @@ export default function App() {
           alt="Dog"
           style={{
             position: "absolute",
-            left: "8%",
-            bottom: `${60 + dogY}px`,
+            left: window.innerWidth < 768 ? "30px" : "8%",
+            bottom: `${50 + dogY}px`,
             width: "clamp(70px, 12vw, 110px)",
             imageRendering: "pixelated",
             zIndex: 5,
@@ -192,10 +222,10 @@ export default function App() {
           style={{
             position: "absolute",
             left: `${obstacleX}px`,
-            bottom: "60px",
+            bottom: "50px",
             width: "clamp(30px, 5vw, 40px)",
             height: "clamp(60px, 10vw, 80px)",
-            background: "#7a1f1f",
+            background: "#8b1e1e",
             border: "3px solid black",
             zIndex: 4,
           }}
@@ -207,7 +237,7 @@ export default function App() {
             bottom: "0",
             left: "0",
             width: "100%",
-            height: "60px",
+            height: "50px",
             background: "#4c9a2a",
             borderTop: "4px solid black",
           }}
